@@ -12,6 +12,7 @@ from statsmodels.stats.anova import anova_lm
 import statsmodels.stats.multitest as smm
 from sklearn.decomposition import PCA
 import seaborn as sns
+from statsmodels.sandbox.stats.multicomp import multipletests
 #matplotlib.style.use('ggplot')
 #cmap = matplotlib.cm.get_cmap('Dark2')
 
@@ -122,6 +123,26 @@ def make_scatter_matrix(in_df, fig_tag):
     g.savefig(fig_tag+'_sm.pdf')
     plt.show()
 
+def make_analysis(norm_df, onesample_results, tag):
+    norm_df['T_'+tag]=onesample_results[0]
+    norm_df['PVAL_'+tag]=onesample_results[1]
+    #p-value distributions
+    norm_df['PVAL_'+tag].plot(kind='hist',bins=100)
+    plt.title('p-val distributions')
+    plt.show()
+
+    #correct for multy-hypotesis
+    p_adjusted = multipletests(norm_df['PVAL_'+tag], method='bonferroni')
+    norm_df['PVAL_'+tag+'_ADJ']=p_adjusted[1]
+
+
+    norm_df.plot(kind='scatter',x='exp10_'+tag,y='log2_fc_'+tag)
+    plt.title('MA plot')
+    plt.show()
+
+    norm_df['-log10_PVAL_'+tag] = -np.log10(norm_df['PVAL_'+tag])
+    norm_df.plot(kind='scatter',x='log2_fc_'+tag,y='-log10_PVAL_'+tag)
+    plt.title('vulcano plot')
     
     
 if __name__ == '__main__':
