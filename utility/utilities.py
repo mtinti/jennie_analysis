@@ -140,8 +140,23 @@ def make_analysis(norm_df, onesample_results, tag):
     plt.title('MA plot')
     plt.show()
 
+    
+    # Set up the figure
+    f, ax = plt.subplots()
+    #ax.set_aspect("equal")
+
+    # Draw the two density plots
+
     norm_df['-log10_PVAL_'+tag] = -np.log10(norm_df['PVAL_'+tag])
-    norm_df.plot(kind='scatter',x='log2_fc_'+tag,y='-log10_PVAL_'+tag)
+    norm_df.plot(kind='scatter',x='log2_fc_'+tag,y='-log10_PVAL_'+tag, ax=ax, alpha=0.1)
+    #norm_df = norm_df[['log2_fc_'+tag, '-log10_PVAL_'+tag]]
+    #norm_df = norm_df.dropna()
+    #norm_df.plot(kind='scatter',x='log2_fc_'+tag,y='-log10_PVAL_'+tag, alpha=0.1,s=1,ax=ax)
+    #sns.kdeplot(norm_df['log2_fc_'+tag], norm_df['-log10_PVAL_'+tag],
+                 #cmap="Blues", shade=True, shade_lowest=False, ax=ax)
+    
+    
+
     plt.title('vulcano plot')
     
     
